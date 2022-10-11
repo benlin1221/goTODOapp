@@ -8,6 +8,16 @@ import (
 	"gorm.io/gorm"
 )
 
+func GetAllTasks(pagination models.Pagination) (*models.Pagination, error) {
+	db := database.DBConn
+	var tasks []models.Task
+	if err := db.Scopes(paginate(tasks, nil, &pagination, db)).Find(&tasks).Error; err != nil {
+		return &pagination, err
+	}
+	pagination.Rows = tasks
+	return &pagination, nil
+}
+
 func GetTaskByID(taskId uint) (models.Task, error) {
 	db := database.DBConn
 	var task models.Task
