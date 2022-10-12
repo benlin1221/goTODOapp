@@ -4,11 +4,10 @@ import (
 	"fmt"
 	"log"
 	"m/v2/app/models"
+	"m/v2/config"
 	"os"
 	"time"
 
-	//"github.com/RCAFAWC/maintainer/app/models"
-	//"github.com/RCAFAWC/maintainer/config"
 	"github.com/gofiber/fiber/v2/middleware/session"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -33,8 +32,6 @@ func Setup() {
 	if DBConn != nil {
 		return
 	}
-
-	cfg = config.GetInstance().GetDatabaseConfig()
 
 	if err := connect(); err != nil {
 		log.Panicf("error could not connect database (%s)", err.Error())
