@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"m/v2/app/models"
 	"m/v2/app/repos"
+	"strconv"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/jinzhu/copier"
@@ -41,34 +42,49 @@ func CreateTodo(c *fiber.Ctx) error {
 }
 
 func GetTasks(c *fiber.Ctx) error {
-	pagination, err := getContextPagination(c, 1000, models.TaskResponse{})
-	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"success": false,
-			"message": err.Error(),
-		})
-	}
-	if pagination.Sort == "" {
-		pagination.Sort = "updated_at asc" // use as default sort behaviour
-	}
-
-	if r, err := repos.GetAllTasks(*pagination); err == nil && r.Rows != nil {
+	if r, err := repos.GetAllTasks(); err == nil && len(*r) > 0 {
 		result := []models.TaskResponse{}
-		rows := r.Rows.([]models.Task)
-		if err := copier.Copy(&result, &rows); err != nil {
+		if err := copier.Copy(&result, &r); err != nil {
 			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 				"success": false,
 				"message": "Cannot map results",
 			})
 		}
-		r.Rows = result
 		return c.Status(fiber.StatusOK).JSON(fiber.Map{
 			"success": true,
-			"data":    r,
+			"data":    result,
 		})
 	}
 	return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 		"success": false,
 		"message": "Cannot fetch results",
+	})
+}
+
+func DeleteTask(c *fiber.Ctx) error {
+	// get parameter value
+	paramId := c.Params("id")
+	var id uint
+	// convert parameter value string to int
+	if v, err := strconv.ParseUint(paramId, 10, 32); err == nil {
+		id = uint(v)
+	} else {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"success": false,
+			"message": "Cannot parse ID",
+		})
+	}
+
+	// find Todo and return
+	if err := repos.DeleteTask(id); err == nil {
+		return c.Status(fiber.StatusOK).JSON(fiber.Map{
+			"success": true,
+		})
+	}
+
+	// if Todo not available
+	return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+		"success": false,
+		"message": "Todo not found",
 	})
 }

@@ -46,7 +46,7 @@ func DeleteTask(taskId uint) error {
 
 	var item models.Task
 	if err := db.First(&item, taskId).Error; errors.Is(err, gorm.ErrRecordNotFound) {
-		return errors.New("todo not found")
+		return errors.New("task not found")
 	}
 	db.Where("task_id = ?", taskId).Delete(&item)
 	return nil
