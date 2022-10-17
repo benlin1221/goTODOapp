@@ -10,7 +10,7 @@ import (
 	"github.com/jinzhu/copier"
 )
 
-func CreateTodo(c *fiber.Ctx) error {
+func CreateTask(c *fiber.Ctx) error {
 	var body models.TaskDTO
 	if err := c.BodyParser(&body); err != nil {
 		fmt.Println(err)
