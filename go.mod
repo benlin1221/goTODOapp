@@ -4,8 +4,18 @@ go 1.19
 
 require (
 	github.com/andybalholm/brotli v1.0.4 // indirect
+	github.com/bradfitz/gomemcache v0.0.0-20220106215444-fb4bf637b56d // indirect
+	github.com/cespare/xxhash/v2 v2.1.2 // indirect
+	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
 	github.com/fsnotify/fsnotify v1.5.4 // indirect
+	github.com/go-redis/redis/v8 v8.11.5 // indirect
 	github.com/gofiber/fiber/v2 v2.38.1 // indirect
+	github.com/gofiber/storage/memcache v0.0.0-20221014050051-2bd20cfa5ae1 // indirect
+	github.com/gofiber/storage/memory v0.0.0-20221014050051-2bd20cfa5ae1 // indirect
+	github.com/gofiber/storage/postgres v0.0.0-20221014050051-2bd20cfa5ae1 // indirect
+	github.com/gofiber/storage/redis v0.0.0-20221014050051-2bd20cfa5ae1 // indirect
+	github.com/gofiber/template v1.7.1 // indirect
+	github.com/gofiber/utils v0.1.2 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/jackc/chunkreader/v2 v2.0.1 // indirect
 	github.com/jackc/pgconn v1.13.0 // indirect
@@ -19,6 +29,7 @@ require (
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/klauspost/compress v1.15.0 // indirect
+	github.com/lib/pq v1.10.7 // indirect
 	github.com/magiconair/properties v1.8.6 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/pelletier/go-toml v1.9.5 // indirect
