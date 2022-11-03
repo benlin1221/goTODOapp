@@ -74,7 +74,10 @@ func (config *Config) setDefaults() {
 	config.SetDefault("DB_USERNAME", "")
 	config.SetDefault("DB_PASSWORD", "")
 	config.SetDefault("DB_PORT", 5432)
-	config.SetDefault("DB_NAME", "maintainer")
+	config.SetDefault("DB_NAME", "todo")
+
+	config.SetDefault("FIBER_VIEWS", "html")
+	config.SetDefault("FIBER_VIEWS_DIRECTORY", "resources/views")
 }
 
 func (config *Config) setClientTLSConfig() {
@@ -167,7 +170,7 @@ func (config *Config) setDatabaseConfig() {
 	}
 }
 
-func (config *Config) getDatabaseConfig() *DatabaseConfig {
+func (config *Config) GetDatabaseConfig() *DatabaseConfig {
 	return config.database
 }
 

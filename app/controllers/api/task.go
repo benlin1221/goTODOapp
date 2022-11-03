@@ -61,6 +61,36 @@ func GetTasks(c *fiber.Ctx) error {
 	})
 }
 
+func UpdateTask(c *fiber.Ctx) error {
+	var body models.TaskDTO
+
+	if err := c.BodyParser(&body); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"success": false,
+			"message": "Cannot parse JSON",
+		})
+	}
+	aTask, err := repos.UpdateTask(body.ID, body.Title, body.Assignee, body.IsDone)
+	if err != nil {
+		return c.Status(fiber.StatusConflict).JSON(fiber.Map{
+			"success": false,
+			"message": err.Error(),
+		})
+	}
+	result := &models.TaskResponse{}
+	if err := copier.Copy(&result, &aTask); err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"success": false,
+			"message": "Cannot map results",
+		})
+	}
+	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
+		"success": true,
+		"data":    result,
+	})
+
+}
+
 func DeleteTask(c *fiber.Ctx) error {
 	// get parameter value
 	paramId := c.Params("id")

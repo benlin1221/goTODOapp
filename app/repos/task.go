@@ -30,7 +30,7 @@ func CreateTask(title string, assignee string) (*models.Task, error) {
 	var tasks []models.Task
 	db.Find(&tasks)
 	task := &models.Task{
-		ID:       uint(len(tasks)),
+		//ID:       uint(len(tasks)),
 		Title:    title,
 		Assignee: assignee,
 		//TODO: find userid from assignee string
@@ -41,13 +41,19 @@ func CreateTask(title string, assignee string) (*models.Task, error) {
 	return task, nil
 }
 
-func DeleteTask(taskId uint) error {
-	db := database.DBConn
+func UpdateTask(taskID uint, title string, assignee string, isDone bool) (*models.Task, error) {
+	var task = models.Task{Title: title, Assignee: assignee}
+	task.ID = taskID
+	err := database.DBConn.Model(&task).Select("Title", "Assignee", "IsDone").Where("id = ?", taskID).Updates(models.Task{Title: title, Assignee: assignee, IsDone: isDone}).Error
+	return &task, err
 
+}
+
+func DeleteTask(taskID uint) error {
 	var item models.Task
-	if err := db.First(&item, taskId).Error; errors.Is(err, gorm.ErrRecordNotFound) {
+	err := database.DBConn.Delete(&item, taskID).Error
+	if errors.Is(err, gorm.ErrRecordNotFound) {
 		return errors.New("task not found")
 	}
-	db.Where("task_id = ?", taskId).Delete(&item)
 	return nil
 }

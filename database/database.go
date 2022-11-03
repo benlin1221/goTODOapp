@@ -32,6 +32,7 @@ func Setup() {
 	if DBConn != nil {
 		return
 	}
+	cfg = config.GetInstance().GetDatabaseConfig()
 
 	if err := connect(); err != nil {
 		log.Panicf("error could not connect database (%s)", err.Error())
