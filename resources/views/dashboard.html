@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    {{template "partials/header"}}
+    <title>Todo List</title>
+</head>
+
+<body>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3"
+        crossorigin="anonymous"></script>
+    <div class="page-content page-container" id="page-content">
+        <div class="padding">
+            <div class="row container d-flex justify-content-center">
+                <div class="col-md-12">
+                    <div class="card px-3">
+                        <div class="card-body">
+                            <h4 class="card-title">Todo list</h4>
+                            <div class="add-items d-flex">
+                                <input type="text" class="form-control todo-list-input" id="title"
+                                    placeholder="e.g., Review design docs">
+                                <input type="text" class="form-control todo-list-input" id="assignee"
+                                    placeholder="Assignee (optional)">
+                                <button onclick="createTask()"
+                                    class="add btn btn-primary font-weight-bold todo-list-add-btn">Add</button>
+                            </div>
+                            <div class="list-wrapper">
+                                <ul id="myUl" class="d-flex flex-column-reverse todo-list">
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>
+            showTasks();
+
+            // Show tasks in a list format
+            function showTasks() {
+                fetch("/api/tasks", {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: null
+                })
+                    .then(response => response.json())
+                    .then(json => {
+                        document.getElementById("myUl").innerHTML = "";
+                        json.data.forEach(function (item) {
+                            var li = renderTask(item);
+                            li.setAttribute('id', item.id)
+                            document.getElementById('myUl').appendChild(li);
+                        });
+                    });
+            }
+
+            function renderTask(param) {
+                let li = document.createElement('li');
+
+                let div = document.createElement('div');
+                div.className = 'form-check';
+
+                label = document.createElement('label');
+                label.className = 'form-check-label';
+                label.type = 'text';
+                label.textContent = param.assignee == "" ? param.title : param.title + " assigned to " + param.assignee;
+                if (param.isDone) label.style = "text-decoration: line-through;";
+
+                input = document.createElement('input');
+                input.className = 'checkbox';
+                input.type = 'checkbox';
+                input.checked = param.isDone;
+                input.onclick = function () {
+                    toggleIsDone(param);
+                };
+
+                let i = document.createElement('i');
+                i.className = 'input-helper';
+
+                label.appendChild(input);
+                label.appendChild(i);
+
+                div.appendChild(label);
+
+                let i2 = document.createElement('i');
+                i2.className = 'material-icons';
+                i2.textContent = 'close';
+                i2.style = "position:absolute; right: 50px;";
+                i2.onclick = function () {
+                    deleteTask(param);
+                };
+
+                let i3 = document.createElement('i');
+                i3.className = 'material-icons';
+                i3.textContent = 'edit';
+                i3.style = "position:absolute; right: 85px;";
+                i3.onclick = function () {
+                    editTask(param);
+                };
+
+                li.appendChild(div);
+                li.appendChild(i2);
+                li.appendChild(i3);
+                return li;
+            }
+
+            function toggleIsDone(param) {
+                param.isDone = !param.isDone;
+                updateTask(param);
+            }
+
+            function updateTask(param) {
+                fetch('/api/tasks/' + param.id, {
+                    method: 'PATCH',
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ id: param.id, title: param.title, assignee: param.assignee, isDone: param.isDone })
+                }).then(response => {
+                    showTasks();
+                }).catch(e => {
+                    console.log(e);
+                });
+            }
+
+            function editTask(param) {
+                let div = document.createElement('div');
+                div.class = "add-items d-flex";
+
+                let input = document.createElement('input');
+                input.type = "text";
+                input.className = "form-control todo-list-input";
+                input.id = "editTitle";
+                input.placeholder = "e.g., Review design docs";
+                input.value = param.title;
+
+                let input2 = document.createElement('input');
+                input2.type = "text";
+                input2.className = "form-control todo-list-input";
+                input2.id = "editAssignee";
+                input2.placeholder = "Assignee (optional)";
+                input2.value = param.assignee;
+
+                let button = document.createElement('button');
+                button.className = "add btn btn-primary font-weight-bold todo-list-add-btn";
+                button.onclick = function () {
+                    updateTask({ id: param.id, title: input.value, assignee: input2.value, isDone: param.isDone });
+                }
+                button.textContent = "Save";
+
+                let button2 = document.createElement('button');
+                button2.className = "add btn btn-secondary font-weight-bold todo-list-add-btn";
+                button2.onclick = function () {
+                    showTasks();
+                }
+                button2.textContent = "Cancel";
+
+
+                div.appendChild(input);
+                div.appendChild(input2);
+                div.appendChild(button);
+                div.appendChild(button2);
+                const listItem = document.getElementById(param.id);
+                listItem.parentNode.replaceChild(div, listItem);
+            }
+
+            function deleteTask(param) {
+                fetch('/api/tasks/' + param.id, {
+                    method: 'DELETE',
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: null
+                }).then(response => {
+                    showTasks();
+                }).catch(e => {
+                    console.log(e);
+                });
+            }
+
+            // Creates task in database 
+            function createTask() {
+                var Title = document.getElementById('title').value;
+                var Assignee = document.getElementById('assignee').value;
+                
+                fetch('/api/tasks/', {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json, text/plain, */*',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ title: Title, Assignee: Assignee })
+                }).then(response => {
+                    showTasks();
+                    document.getElementById('title').value = "";
+                    document.getElementById('assignee').value = "";
+                }).catch(e => {
+                    console.log(e);
+                });
+            }
+
+        </script>
+</body>
+
+</html>
