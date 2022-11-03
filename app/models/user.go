@@ -7,9 +7,14 @@ import (
 type User struct {
 	gorm.Model
 	ID       uint   `json:"id"`
-	Username string `json:"username" validate:"omitempty,min=5,max=16,alphanum"`
-	Password string `json:"password" validate:"omitempty,min=8,max=20,alphanum"`
+	Username string `json:"username" gorm:"not null"`
+	Password string `json:"password" gorm:"not null"`
 	Tasks    []Task `json:"tasks"`
+}
+
+type UserDTO struct {
+	Username string `json:"username" gorm:"not null"`
+	Password string `json:"password"`
 }
 
 type UserResponse struct {
