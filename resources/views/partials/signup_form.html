@@ -1,0 +1,28 @@
+<div class="row">
+    <div class="col-md-12 order-md-1">
+      <h4 class="mb-3">Your details</h4>
+      <form class="needs-validation" novalidate="" id="signup">
+        <div class="row">
+          <div class="col-md-4 mb-3">
+            <label for="username">Username</label>
+            <input type="text" class="form-control" id="username" name="username" placeholder="" value="{{ if .Username }}{{ .Username }}{{end}}"
+              required="true">
+            <div class="invalid-feedback">
+              Valid username is required.
+            </div>
+          </div>
+          <label for="password">Password</label>
+          <input type="text" class="form-control" id="password" name="password" placeholder="" value="{{ if .Password }}{{ .Password }}{{end}}"
+            required="true">
+          <div class="invalid-feedback">
+            Valid password is required.
+          </div>
+        </div>
+        </div>
+
+        <button class="btn btn-primary btn-lg btn-block" id="signUpBtn" type="submit">Sign up</button>
+
+        <span class="text-danger" id="error"></span>
+      </form>
+    </div>
+  </div>
