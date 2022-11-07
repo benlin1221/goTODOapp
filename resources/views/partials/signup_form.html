@@ -1,15 +1,13 @@
-<div class="row">
-    <div class="col-md-12 order-md-1">
+<div class="">
+    <div class="col-md-12">
       <h4 class="mb-3">Your details</h4>
       <form class="needs-validation" novalidate="" id="signup">
-        <div class="row">
-          <div class="col-md-4 mb-3">
+        <div class="">
             <label for="username">Username</label>
             <input type="text" class="form-control" id="username" name="username" placeholder="" value="{{ if .Username }}{{ .Username }}{{end}}"
               required="true">
             <div class="invalid-feedback">
               Valid username is required.
-            </div>
           </div>
           <label for="password">Password</label>
           <input type="text" class="form-control" id="password" name="password" placeholder="" value="{{ if .Password }}{{ .Password }}{{end}}"
